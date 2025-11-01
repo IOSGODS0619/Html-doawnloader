@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Downloader</title>
+<style>
+  body {
+    background-color: #000;
+    color: #00ff66;
+    font-family: "Courier New", monospace;
+    text-align: center;
+    padding: 50px;
+  }
+  h1 {
+    font-size: 2em;
+    text-shadow: 0 0 10px #00ff66;
+    animation: flicker 1.5s infinite alternate;
+  }
+  @keyframes flicker {
+    from { opacity: 1; }
+    to { opacity: 0.8; }
+  }
+  input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #111;
+    color: #00ff66;
+    font-size: 16px;
+  }
+  button {
+    margin-top: 20px;
+    padding: 10px 25px;
+    font-size: 16px;
+    background: #00ff66;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #000;
+    font-weight: bold;
+  }
+  button:hover {
+    background: #00cc55;
+  }
+  #status {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+  <h1>🔰 HTML Downloader 🔰</h1>
+  <p>Ilagay ang URL ng .html file na gusto mong i-download:</p>
+  <input type="text" id="url" placeholder="https://example.com/file.html"><br>
+  <button onclick="downloadHTML()">Download HTML</button>
+  <div id="status"></div>
+
+  <script>
+    async function downloadHTML() {
+      const url = document.getElementById('url').value.trim();
+      const status = document.getElementById('status');
+      if (!url) {
+        status.innerText = "⚠️ Pakilagay ang URL muna.";
+        return;
+      }
+
+      status.innerText = "⏳ Kinukuha ang file...";
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Error: " + response.status);
+        const blob = await response.blob();
+        const filename = url.split('/').pop().split('?')[0] || "download.html";
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        status.innerText = "✅ Download complete: " + filename;
+      } catch (err) {
+        status.innerText = "❌ Failed to download: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
